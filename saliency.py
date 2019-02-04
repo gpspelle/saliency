@@ -5,14 +5,19 @@ import PIL.Image
 from matplotlib import pylab as P
 import pickle
 import os
+import sys
 slim=tf.contrib.slim
 
 if not os.path.exists('models/research/slim'):
   os.system("git clone https://github.com/tensorflow/models/")
+
+sys.path.append('models/research/slim')
 old_cwd = os.getcwd()
-os.chdir('models/research/slim')
+#os.chdir('models/research/slim')
+
+#from models.research.slim.nets import inception_v3
 from nets import inception_v3
-os.chdir(old_cwd)
+#os.chdir(old_cwd)
 
 # From our repository.
 import saliency
@@ -56,7 +61,7 @@ def LoadImage(file_path):
 
 # Use either wget or curl depending on your OS.
 if not os.path.exists('inception_v3.ckpt'):
-  #os.system("wget http://download.tensorflow.org/models/inception_v3_2016_08_28.tar.gz")
+  os.system("wget http://download.tensorflow.org/models/inception_v3_2016_08_28.tar.gz")
   os.system("curl -O http://download.tensorflow.org/models/inception_v3_2016_08_28.tar.gz")
   os.system("tar -xvzf inception_v3_2016_08_28.tar.gz")
 
