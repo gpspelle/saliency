@@ -20,7 +20,7 @@ from nets import inception_v3
 #os.chdir(old_cwd)
 
 # From our repository.
-import saliency
+import base_code
 
 #%matplotlib inline
 
@@ -88,8 +88,19 @@ with graph.as_default():
   # Construct tensor for predictions.
   prediction = tf.argmax(logits, 1)
 
+# Load the image
+im = LoadImage('./doberman.png')
+
+# Show the image
+#ShowImage(im)
+
+# Make a prediction. 
+prediction_class = sess.run(prediction, feed_dict = {images: [im]})[0]
+
+print("Prediction class: " + str(prediction_class))  # Should be a doberman, class idx = 237
+
 # Construct the saliency object. This doesn't yet compute the saliency mask, it just sets up the necessary ops.
-integrated_gradients = saliency.IntegratedGradients(graph, sess, y, images)
+integrated_gradients = base_code.IntegratedGradients(graph, sess, y, images)
 
 # Baseline is a black image.
 baseline = np.zeros(im.shape)
@@ -103,8 +114,8 @@ smoothgrad_integrated_gradients_mask_3d = integrated_gradients.GetSmoothedMask(
   im, feed_dict = {neuron_selector: prediction_class}, x_steps=25, x_baseline=baseline)
 
 # Call the visualization methods to convert the 3D tensors to 2D grayscale.
-vanilla_mask_grayscale = saliency.VisualizeImageGrayscale(vanilla_integrated_gradients_mask_3d)
-smoothgrad_mask_grayscale = saliency.VisualizeImageGrayscale(smoothgrad_integrated_gradients_mask_3d)
+vanilla_mask_grayscale = base_code.VisualizeImageGrayscale(vanilla_integrated_gradients_mask_3d)
+smoothgrad_mask_grayscale = base_code.VisualizeImageGrayscale(smoothgrad_integrated_gradients_mask_3d)
 
 # Set up matplot lib figures.
 ROWS = 1
@@ -113,5 +124,5 @@ UPSCALE_FACTOR = 10
 P.figure(figsize=(ROWS * UPSCALE_FACTOR, COLS * UPSCALE_FACTOR))
 
 # Render the saliency masks.
-ShowGrayscaleImage(vanilla_mask_grayscale, title='Vanilla Integrated Gradients', ax=P.subplot(ROWS, COLS, 1))
-ShowGrayscaleImage(smoothgrad_mask_grayscale, title='Smoothgrad Integrated Gradients', ax=P.subplot(ROWS, COLS, 2))
+#ShowGrayscaleImage(vanilla_mask_grayscale, title='Vanilla Integrated Gradients', ax=P.subplot(ROWS, COLS, 1))
+#ShowGrayscaleImage(smoothgrad_mask_grayscale, title='Smoothgrad Integrated Gradients', ax=P.subplot(ROWS, COLS, 2))
